@@ -20,7 +20,7 @@ app.http('all', {
 
             new Parkrun(
                 "Woking", 
-                new Date(2024,8,3), 
+                new Date(2024,0,13), 
                 611, 
                 250, 
                 new Temporal.Duration(0,0,0,0,30,1), 
