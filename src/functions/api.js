@@ -1,5 +1,9 @@
 const { app } = require('@azure/functions');
 
+if(typeof Temporal === "undefined") {
+    const { Temporal } = require('@js-temporal/polyfill');
+}
+
 app.http('parkruns', {
     methods: ['GET'],
     authLevel: 'anonymous',
@@ -13,7 +17,7 @@ app.http('parkruns', {
                 new Date(2024,4,18), 
                 611, 
                 100, 
-                "25:21",//new Temporal.Duration(0,0,0,0,25,21), 
+                new Temporal.Duration(0,0,0,0,25,21), 
                 44.19,
                 false
             ),
@@ -23,7 +27,7 @@ app.http('parkruns', {
                 new Date(2024,0,13), 
                 611, 
                 250, 
-                "30:01",//new Temporal.Duration(0,0,0,0,30,1), 
+                new Temporal.Duration(0,0,0,0,30,1), 
                 24.0,
                 false
             ),
@@ -33,7 +37,7 @@ app.http('parkruns', {
                 new Date(2023,6,8), 
                 611, 
                 175, 
-                "26:54",//new Temporal.Duration(0,0,0,0,26,54), 
+                new Temporal.Duration(0,0,0,0,26,54), 
                 60.19,
                 false
             ),
@@ -43,7 +47,7 @@ app.http('parkruns', {
                 new Date(2021,11,18), 
                 160, 
                 40, 
-                "22:01",//new Temporal.Duration(0,0,0,0,22,1), 
+                new Temporal.Duration(0,0,0,0,22,1), 
                 55.36,
                 true
             )
