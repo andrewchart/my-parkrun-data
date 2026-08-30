@@ -1,8 +1,7 @@
 const { app } = require('@azure/functions');
 
-if(typeof Temporal === "undefined") {
-    const { Temporal } = require('@js-temporal/polyfill');
-}
+const { Temporal: PolyfillTemporal } = require('@js-temporal/polyfill');
+const Temporal = globalThis.Temporal ?? PolyfillTemporal;
 
 app.http('parkruns', {
     methods: ['GET'],
