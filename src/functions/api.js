@@ -1,6 +1,6 @@
 const { app } = require('@azure/functions');
 
-app.http('all', {
+app.http('parkruns', {
     methods: ['GET'],
     authLevel: 'anonymous',
     handler: async (request, context) => {
