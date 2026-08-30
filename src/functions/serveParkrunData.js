@@ -1,6 +1,6 @@
 const { app } = require('@azure/functions');
 
-app.http('example', {
+app.http('all', {
     methods: ['GET'],
     authLevel: 'anonymous',
     handler: async (request, context) => {
@@ -10,7 +10,7 @@ app.http('example', {
 
             new Parkrun(
                 "Woking", 
-                new Date(2026,8,5), 
+                new Date(2024,4,18), 
                 611, 
                 100, 
                 new Temporal.Duration(0,0,0,0,25,21), 
@@ -20,7 +20,7 @@ app.http('example', {
 
             new Parkrun(
                 "Woking", 
-                new Date(2026,8,19), 
+                new Date(2024,8,3), 
                 611, 
                 250, 
                 new Temporal.Duration(0,0,0,0,30,1), 
@@ -30,7 +30,7 @@ app.http('example', {
 
             new Parkrun(
                 "Guildford", 
-                new Date(2027,3,24), 
+                new Date(2023,6,8), 
                 611, 
                 175, 
                 new Temporal.Duration(0,0,0,0,26,54), 
@@ -40,7 +40,7 @@ app.http('example', {
 
             new Parkrun(
                 "Brooklands", 
-                new Date(2025,3,21), 
+                new Date(2021,11,18), 
                 160, 
                 40, 
                 new Temporal.Duration(0,0,0,0,22,1), 
