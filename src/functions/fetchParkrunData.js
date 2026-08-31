@@ -23,15 +23,22 @@ app.timer('fetchParkrunData', {
 
             await driver.get(MPD_PARKRUNNER_URL);
             
-            let parkruns = await driver.findElements(By.xpath('(//table[@id="results"])[3]/tbody/tr'));
+            let allRuns = await driver.findElements(By.xpath('(//table[@id="results"])[3]/tbody/tr'));
 
-            for(let parkrun of parkruns) {
+            let results = [];
+
+            for(let run of allRuns) {
                 let runData = [];
-                let cols = await parkrun.findElements(By.css('td'));
+                let cols = await run.findElements(By.css('td'));
                 for(let col of cols) {
                     runData.push(await col.getText());
                 }
-                context.log(new Parkrun(...runData));
+                results.push(new Parkrun(...runData));
+            }
+
+            return {
+                body: JSON.stringify({ message: 'OK', results }),
+                status: 200
             }
 
         } catch(err) {
