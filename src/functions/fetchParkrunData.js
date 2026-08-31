@@ -7,8 +7,11 @@ const Parkrun = require('../model/Parkrun.js');
 
 const { MPD_PARKRUNNER_URL } = process.env;
 
-app.timer('fetchParkrunData', {
-    schedule: '0 0 17 * * 6',
+app.http('fetchParkrunData', {
+    methods: ['GET'],
+    authLevel: 'anonymous',
+// app.timer('fetchParkrunData', {
+//     schedule: '0 0 17 * * 6',
     handler: async (myTimer, context) => {
         context.log('Timer function processed request.');
 
