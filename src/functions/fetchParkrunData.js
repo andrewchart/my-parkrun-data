@@ -16,6 +16,10 @@ app.http('fetchParkrunData', {
         context.log('Timer function processed request.');
 
         const options = new chrome.Options();
+        
+        const ua = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.50 Safari/537.36';
+
+        options.addArguments('--headless', `user-agent=${ua}`);
 
         const driver = await new Builder()
             .forBrowser('chrome')

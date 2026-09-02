@@ -9,6 +9,7 @@
   "dependencies": {
     "@azure/functions": "^4.0.0",
     "@js-temporal/polyfill": "^0.5.1",
+    "chromedriver": "^152.0.3",
     "selenium-webdriver": "^4.48.0"
   },
   "main": "src/{index.js,functions/*.js}"
