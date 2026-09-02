@@ -17,15 +17,15 @@ app.http('fetchParkrunData', {
     handler: async (myTimer, context) => {
         context.log('Timer function processed request.');
 
-        diagnostic('which google-chrome');
-        diagnostic('which google-chrome-stable');
-        diagnostic('which chromium');
-        diagnostic('which chromium-browser');
-        diagnostic('which chromedriver');
+        diagnostic('which google-chrome', context);
+        diagnostic('which google-chrome-stable', context);
+        diagnostic('which chromium', context);
+        diagnostic('which chromium-browser', context);
+        diagnostic('which chromedriver', context);
 
-        diagnostic('google-chrome --version');
-        diagnostic('chromium --version');
-        diagnostic('chromedriver --version');
+        diagnostic('google-chrome --version', context);
+        diagnostic('chromium --version', context);
+        diagnostic('chromedriver --version', context);
 
         const options = new chrome.Options();
     
@@ -68,17 +68,17 @@ app.http('fetchParkrunData', {
     }
 });
 
- function diagnostic(command) {
+ function diagnostic(command, context) {
     try {
-        console.log(`$ ${command}`);
-        console.log(execSync(command, {
+        context.log(`$ ${command}`);
+        context.log(execSync(command, {
             encoding: 'utf8',
             stdio: ['ignore', 'pipe', 'pipe']
         }));
     } catch (e) {
-        console.log(`FAILED: ${command}`);
-        console.log(e.stdout?.toString());
-        console.log(e.stderr?.toString());
-        console.log(e.message);
+        context.log(`FAILED: ${command}`);
+        context.log(e.stdout?.toString());
+        context.log(e.stderr?.toString());
+        context.log(e.message);
     }
 }
