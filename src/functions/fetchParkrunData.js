@@ -1,5 +1,7 @@
 const { app } = require('@azure/functions');
 
+const { execSync } = require('child_process');
+
 const { Builder, Browser, By } = require('selenium-webdriver');
 const chrome = require('selenium-webdriver/chrome')
 
@@ -15,18 +17,28 @@ app.http('fetchParkrunData', {
     handler: async (myTimer, context) => {
         context.log('Timer function processed request.');
 
+        diagnostic('which google-chrome');
+        diagnostic('which google-chrome-stable');
+        diagnostic('which chromium');
+        diagnostic('which chromium-browser');
+        diagnostic('which chromedriver');
+
+        diagnostic('google-chrome --version');
+        diagnostic('chromium --version');
+        diagnostic('chromedriver --version');
+
+        const options = new chrome.Options();
+    
+        const ua = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.50 Safari/537.36';
+
+        options.addArguments('--headless', `user-agent=${ua}`);
+
+        const driver = await new Builder()
+            .forBrowser('chrome')
+            .setChromeOptions(options)
+            .build();
+
         try {
-
-            const options = new chrome.Options();
-        
-            const ua = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.50 Safari/537.36';
-
-            options.addArguments('--headless', `user-agent=${ua}`);
-
-            const driver = await new Builder()
-                .forBrowser('chrome')
-                .setChromeOptions(options)
-                .build();
 
             await driver.get(MPD_PARKRUNNER_URL);
 
@@ -55,3 +67,18 @@ app.http('fetchParkrunData', {
         }
     }
 });
+
+ function diagnostic(command) {
+    try {
+        console.log(`$ ${command}`);
+        console.log(execSync(command, {
+            encoding: 'utf8',
+            stdio: ['ignore', 'pipe', 'pipe']
+        }));
+    } catch (e) {
+        console.log(`FAILED: ${command}`);
+        console.log(e.stdout?.toString());
+        console.log(e.stderr?.toString());
+        console.log(e.message);
+    }
+}
