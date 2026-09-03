@@ -1,9 +1,6 @@
 const { app } = require('@azure/functions');
 
-const { execSync } = require('child_process');
-
-const { Builder, Browser, By } = require('selenium-webdriver');
-const chrome = require('selenium-webdriver/chrome')
+const puppeteer = require("puppeteer");
 
 const Parkrun = require('../model/Parkrun.js');
 
@@ -17,43 +14,33 @@ app.http('fetchParkrunData', {
     handler: async (myTimer, context) => {
         context.log('Timer function processed request.');
 
-        diagnostic('which google-chrome', context);
-        diagnostic('which google-chrome-stable', context);
-        diagnostic('which chromium', context);
-        diagnostic('which chromium-browser', context);
-        diagnostic('which chromedriver', context);
-
-        diagnostic('google-chrome --version', context);
-        diagnostic('chromium --version', context);
-        diagnostic('chromedriver --version', context);
-
-        const options = new chrome.Options();
-    
-        const ua = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.50 Safari/537.36';
-
-        options.addArguments('--headless', `user-agent=${ua}`);
-
-        const driver = await new Builder()
-            .forBrowser('chrome')
-            .setChromeOptions(options)
-            .build();
+        const browser = await puppeteer.launch({headless: false});
+        const page = await browser.newPage();
 
         try {
 
-            await driver.get(MPD_PARKRUNNER_URL);
+            await page.goto(MPD_PARKRUNNER_URL, { waitUntil: 'domcontentloaded' });
 
-            let allRuns = await driver.findElements(By.xpath('(//table[@id="results"])[3]/tbody/tr'));
+            const xpath = '(//table[@id="results"])[3]/tbody';
+            const container = `::-p-xpath(${xpath})`;
+            const runs = `::-p-xpath(${xpath}/tr)`
 
-            let results = [];
+            await page.locator(container).waitHandle();
 
-            for(let run of allRuns) {
-                let runData = [];
-                let cols = await run.findElements(By.css('td'));
-                for(let col of cols) {
-                    runData.push(await col.getText());
-                }
-                results.push(new Parkrun(...runData));
-            }
+            const allRunsData = await page.$$eval(`${runs}`, runs => {
+                
+                let allRunsData = []
+
+                runs.forEach(run => {
+                    let thisRunData=[];
+                    run.childNodes.forEach(td => thisRunData.push(td.innerText));
+                    allRunsData.push(thisRunData);
+                });
+
+                return allRunsData;
+            });
+
+            const results = allRunsData.map((runData) => new Parkrun(...runData));
 
             return {
                 body: JSON.stringify({ message: 'OK', results }),
@@ -63,22 +50,9 @@ app.http('fetchParkrunData', {
         } catch(err) {
             context.log(err);
         } finally {
-            await driver.quit();
+            browser.close();
         }
     }
 });
 
- function diagnostic(command, context) {
-    try {
-        context.log(`$ ${command}`);
-        context.log(execSync(command, {
-            encoding: 'utf8',
-            stdio: ['ignore', 'pipe', 'pipe']
-        }));
-    } catch (e) {
-        context.log(`FAILED: ${command}`);
-        context.log(e.stdout?.toString());
-        context.log(e.stderr?.toString());
-        context.log(e.message);
-    }
-}
+
