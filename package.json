@@ -8,11 +8,7 @@
   },
   "dependencies": {
     "@azure/functions": "^4.0.0",
-    "@js-temporal/polyfill": "^0.5.1",
-    "puppeteer": "^25.10.0"
-  },
-  "allowScripts": {
-    "puppeteer": true
+    "@js-temporal/polyfill": "^0.5.1"
   },
   "main": "src/{index.js,functions/*.js}"
 }

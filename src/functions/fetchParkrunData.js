@@ -1,7 +1,5 @@
 const { app } = require('@azure/functions');
 
-const puppeteer = require("puppeteer");
-
 const Parkrun = require('../model/Parkrun.js');
 
 const { MPD_PARKRUNNER_URL } = process.env;
@@ -14,33 +12,32 @@ app.http('fetchParkrunData', {
     handler: async (myTimer, context) => {
         context.log('Timer function processed request.');
 
-        const browser = await puppeteer.launch({headless: false});
-        const page = await browser.newPage();
-
         try {
 
-            await page.goto(MPD_PARKRUNNER_URL, { waitUntil: 'domcontentloaded' });
+            const results = [];
+
+            const options = {
+                headers: {
+                    'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.50 Safari/537.36',
+                }
+            };
+
+            let res = await fetch(MPD_PARKRUNNER_URL, options);
+
+            if(!res.ok) {
+                return {
+                    body: JSON.stringify({ message: res.statusText }),
+                    status: res.status
+                }
+            }
+
+            let html = await res.text();
+
+            context.log(html);
 
             const xpath = '(//table[@id="results"])[3]/tbody';
             const container = `::-p-xpath(${xpath})`;
             const runs = `::-p-xpath(${xpath}/tr)`
-
-            await page.locator(container).waitHandle();
-
-            const allRunsData = await page.$$eval(`${runs}`, runs => {
-                
-                let allRunsData = []
-
-                runs.forEach(run => {
-                    let thisRunData=[];
-                    run.childNodes.forEach(td => thisRunData.push(td.innerText));
-                    allRunsData.push(thisRunData);
-                });
-
-                return allRunsData;
-            });
-
-            const results = allRunsData.map((runData) => new Parkrun(...runData));
 
             return {
                 body: JSON.stringify({ message: 'OK', results }),
@@ -49,10 +46,6 @@ app.http('fetchParkrunData', {
 
         } catch(err) {
             context.log(err);
-        } finally {
-            browser.close();
         }
     }
 });
-
-
