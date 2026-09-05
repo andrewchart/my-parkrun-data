@@ -6,6 +6,8 @@ const Parkrun = require('../model/Parkrun.js');
 
 const { MPD_PARKRUNNER_URL } = process.env;
 
+process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0;
+
 app.http('fetchParkrunData', {
     methods: ['GET'],
     authLevel: 'anonymous',
@@ -22,26 +24,28 @@ app.http('fetchParkrunData', {
 
             await page.goto(MPD_PARKRUNNER_URL, { waitUntil: 'domcontentloaded' });
 
-            const xpath = '(//table[@id="results"])[3]/tbody';
-            const container = `::-p-xpath(${xpath})`;
-            const runs = `::-p-xpath(${xpath}/tr)`
+            // const xpath = '(//table[@id="results"])[3]/tbody';
+            // const container = `::-p-xpath(${xpath})`;
+            // const runs = `::-p-xpath(${xpath}/tr)`
 
-            await page.locator(container).waitHandle();
+            //await page.locator(container).waitHandle();
 
-            const allRunsData = await page.$$eval(`${runs}`, runs => {
+            const results = await page.$eval('html', el => el.outerHTML);
+
+            // const allRunsData = await page.$$eval(`${runs}`, runs => {
                 
-                let allRunsData = []
+            //     let allRunsData = []
 
-                runs.forEach(run => {
-                    let thisRunData=[];
-                    run.childNodes.forEach(td => thisRunData.push(td.innerText));
-                    allRunsData.push(thisRunData);
-                });
+            //     runs.forEach(run => {
+            //         let thisRunData=[];
+            //         run.childNodes.forEach(td => thisRunData.push(td.innerText));
+            //         allRunsData.push(thisRunData);
+            //     });
 
-                return allRunsData;
-            });
+            //     return allRunsData;
+            // });
 
-            const results = allRunsData.map((runData) => new Parkrun(...runData));
+            // const results = allRunsData.map((runData) => new Parkrun(...runData));
 
             return {
                 body: JSON.stringify({ message: 'OK', results }),
