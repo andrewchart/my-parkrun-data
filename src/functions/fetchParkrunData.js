@@ -1,5 +1,7 @@
 const { app } = require('@azure/functions');
 
+const fs = require('fs');
+
 const puppeteer = require("puppeteer");
 
 const Parkrun = require('../model/Parkrun.js');
@@ -24,13 +26,17 @@ app.http('fetchParkrunData', {
 
             await page.goto(MPD_PARKRUNNER_URL, { waitUntil: 'domcontentloaded' });
 
+            await page.screenshot({path: 'hn.png'});
+
+            const results = fs.readFileSync('hn.png');
+
             // const xpath = '(//table[@id="results"])[3]/tbody';
             // const container = `::-p-xpath(${xpath})`;
             // const runs = `::-p-xpath(${xpath}/tr)`
 
             //await page.locator(container).waitHandle();
 
-            const results = await page.$eval('html', el => el.outerHTML);
+            //const results = await page.$eval('html', el => el.outerHTML);
 
             // const allRunsData = await page.$$eval(`${runs}`, runs => {
                 
