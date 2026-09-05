@@ -18,23 +18,28 @@ app.http('fetchParkrunData', {
     handler: async (myTimer, context) => {
         context.log('Timer function processed request.');
 
-        const browser = await puppeteer.launch({headless: true}); 
-        context.log(22);
+        try {
+            const browser = await puppeteer.launch({headless: true}); 
+        } catch (err) {
+            context.log(24, err);
+        }
+        
+        context.log(27);
         const page = await browser.newPage();
-        context.log(24);
+        context.log(29);
         await page.setUserAgent('Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.50 Safari/537.36');
-        context.log(26);
+        context.log(31);
 
         try {
 
             await page.goto(MPD_PARKRUNNER_URL, { waitUntil: 'domcontentloaded' });
-            context.log(31);
+            context.log(36);
 
             await page.screenshot({path: 'hn.png'});
-            context.log(34);
+            context.log(39);
 
             const results = fs.readFileSync('hn.png');
-            context.log(37);
+            context.log(42);
 
             // const xpath = '(//table[@id="results"])[3]/tbody';
             // const container = `::-p-xpath(${xpath})`;
@@ -65,10 +70,10 @@ app.http('fetchParkrunData', {
             }
 
         } catch(err) {
-            context.log(68);
+            context.log(73);
             context.log(err);
         } finally {
-            context.log(71);
+            context.log(76);
             browser.close();
         }
     }
