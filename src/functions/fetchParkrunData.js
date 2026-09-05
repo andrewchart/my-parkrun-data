@@ -4,6 +4,8 @@ const Parkrun = require('../model/Parkrun.js');
 
 const { MPD_PARKRUNNER_URL } = process.env;
 
+process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0;
+
 app.http('fetchParkrunData', {
     methods: ['GET'],
     authLevel: 'anonymous',
@@ -17,12 +19,15 @@ app.http('fetchParkrunData', {
             const results = [];
 
             const options = {
+                method: 'GET',
                 headers: {
                     'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.50 Safari/537.36',
                 }
             };
 
             let res = await fetch(MPD_PARKRUNNER_URL, options);
+
+            context.log(res);
 
             if(!res.ok) {
                 return {
@@ -33,7 +38,7 @@ app.http('fetchParkrunData', {
 
             let html = await res.text();
 
-            context.log(html);
+            context.log(res.status);
 
             const xpath = '(//table[@id="results"])[3]/tbody';
             const container = `::-p-xpath(${xpath})`;
