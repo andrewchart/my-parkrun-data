@@ -22,7 +22,7 @@ app.http('parkruns', {
 
             new Parkrun(
                 "Woking", 
-                "13/01/2024",
+                "31/10/2026",
                 "611",
                 "250", 
                 "30:01", 
@@ -32,7 +32,7 @@ app.http('parkruns', {
 
             new Parkrun(
                 "Guildford", 
-                "08/07/2023", 
+                "03/04/2027", 
                 "611", 
                 "175", 
                 "26:54",
