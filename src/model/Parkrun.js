@@ -16,7 +16,7 @@ function dateFromUKDateString(dateString) {
     let d = parseInt(ints[0]);
     let m = parseInt(ints[1]) - 1;
     let Y = parseInt(ints[2]);
-    return new Date(Y,m,d);
+    return new Date(Date.UTC(Y,m,d));
 }
 
 function temporalFromMinsSecs(time) {
