@@ -7,7 +7,10 @@
     "test": "echo \"No tests yet...\""
   },
   "dependencies": {
+    "@azure/data-tables": "^13.3.2",
     "@azure/functions": "^4.0.0",
+    "@azure/identity": "^4.13.2",
+    "@azure/storage-blob": "^12.33.0",
     "@js-temporal/polyfill": "^0.5.1"
   },
   "allowScripts": {
