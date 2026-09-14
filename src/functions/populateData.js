@@ -9,8 +9,6 @@ const {
 } = require('../model/Stats.js');
 
 const {
-    AZ_ACCOUNT_NAME,
-    AZ_ACCOUNT_KEY,
     AZ_API_DATA_TABLE_NAME,
     AZ_JSON_BLOB_STORAGE_NAME,
     AZ_JSON_BLOB_STORAGE_URL,

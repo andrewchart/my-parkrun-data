@@ -2,8 +2,6 @@
   "IsEncrypted": false,
   "Values": {
     "AzureWebJobsStorage": "UseDevelopmentStorage=true",
-    "AZ_ACCOUNT_NAME": "xxxx",
-    "AZ_ACCOUNT_KEY": "xxxx",
     "AZ_API_DATA_TABLE_NAME": "xxxx",
     "AZ_API_STATS_TABLE_NAME": "xxxx",
     "AZ_JSON_BLOB_STORAGE_URL": "https://xxxx.blob.core.windows.net/",
