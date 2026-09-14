@@ -1,55 +1,39 @@
 const { app } = require('@azure/functions');
+const { TableClient } = require("@azure/data-tables");
+const { DefaultAzureCredential } = require("@azure/identity");
 
 const Parkrun = require('../model/Parkrun.js');
+
+const {
+    AZ_API_DATA_TABLE_NAME,
+    AZ_TABLE_STORAGE_URL
+} = process.env;
 
 app.http('parkruns', {
     methods: ['GET'],
     authLevel: 'anonymous',
     handler: async (request, context) => {
-        context.log(`Http function processed request for url "${request.url}"`);
 
-        let parkruns = [
+        const tableService = new TableClient(
+            AZ_TABLE_STORAGE_URL, 
+            AZ_API_DATA_TABLE_NAME, 
+            new DefaultAzureCredential()
+        );
 
-            new Parkrun(
-                "Woking", 
-                "05/09/2026", 
-                "527", 
-                "273", 
-                "31:09", 
-                "43.50%",
-                ""
-            ),
+        let parkruns = [];
+        let rawData = await tableService.listEntities();
 
-            new Parkrun(
-                "Woking", 
-                "13/01/2024",
-                "611",
-                "250", 
-                "30:01", 
-                "24.0%",
-                " "
-            ),
-
-            new Parkrun(
-                "Guildford", 
-                "08/07/2023", 
-                "611", 
-                "175", 
-                "26:54",
-                "60.19%",
-                "  "
-            ),
-
-            new Parkrun(
-                "Brooklands", 
-                "18/12/2021", 
-                "160", 
-                "40", 
-                "22:01",
-                "55.36%",
-                " PB "
-            )
-        ];
+        for await (const pr of rawData) {
+            parkruns.push(new Parkrun(
+                pr.event,
+                pr.run_date,
+                pr.run_number,
+                pr.pos,
+                pr.time,
+                pr.age_grade,
+                pr.pb
+            ));
+        }
 
         let response = {
             body: JSON.stringify({ message: 'OK', parkruns }),
@@ -59,4 +43,3 @@ app.http('parkruns', {
         return response;
     }
 });
-
