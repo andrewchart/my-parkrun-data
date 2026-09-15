@@ -18,18 +18,18 @@ app.http('parkruns', {
             new DefaultAzureCredential()
         );
 
-        let results = [];
-        let parkruns = await tableService.listEntities({
+        let parkruns = [];
+        let data = await tableService.listEntities({
             queryOptions: { select: ['event','run_date','run_number','pos','time','age_grade','pb'] }
         });
 
-        for await (const parkrun of parkruns) {
+        for await (const parkrun of data) {
             delete parkrun.etag;
-            results.push(parkrun);
+            parkruns.push(parkrun);
         }
 
         let response = {
-            body: JSON.stringify({ message: 'OK', results }),
+            body: JSON.stringify({ message: 'OK', parkruns }),
             status: 200
         }
 
