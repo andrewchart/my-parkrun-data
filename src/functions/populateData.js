@@ -3,6 +3,8 @@ const { TableClient } = require("@azure/data-tables");
 const { BlobServiceClient } = require("@azure/storage-blob");
 const { DefaultAzureCredential } = require("@azure/identity");
 
+const Parkrun = require('../model/Parkrun.js');
+
 const {
     getStat,
     setStat
@@ -107,11 +109,12 @@ async function writeRuns(runs, creds) {
     // Write only the runs that are not yet in the table
     for(let i = 0; runNum - i > highestId; i++) {
 
-        let rowKey = (runNum - i).toString().padStart(4, "0");
+        results.push(tableService.upsertEntity({ 
+            partitionKey: 'run', 
+            rowKey: (runNum - i).toString().padStart(4, "0"), 
+            ...new Parkrun(...runs[i])
+        }, "Replace"));
 
-        run = { partitionKey: 'run', rowKey, ...runs[i] };
-
-        results.push(tableService.upsertEntity(run, "Replace"));
     };
 
     return Promise.all(results).then((results) => {

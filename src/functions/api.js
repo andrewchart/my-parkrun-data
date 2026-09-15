@@ -2,8 +2,6 @@ const { app } = require('@azure/functions');
 const { TableClient } = require("@azure/data-tables");
 const { DefaultAzureCredential } = require("@azure/identity");
 
-const Parkrun = require('../model/Parkrun.js');
-
 const {
     AZ_API_DATA_TABLE_NAME,
     AZ_TABLE_STORAGE_URL
@@ -20,23 +18,15 @@ app.http('parkruns', {
             new DefaultAzureCredential()
         );
 
-        let parkruns = [];
-        let rawData = await tableService.listEntities();
+        let results = [];
+        let parkruns = await tableService.listEntities();
 
-        for await (const pr of rawData) {
-            parkruns.push(new Parkrun(
-                pr.event,
-                pr.run_date,
-                pr.run_number,
-                pr.pos,
-                pr.time,
-                pr.age_grade,
-                pr.pb
-            ));
+        for await (const parkrun of parkruns) {
+            results.push(parkrun);
         }
 
         let response = {
-            body: JSON.stringify({ message: 'OK', parkruns }),
+            body: JSON.stringify({ message: 'OK', results }),
             status: 200
         }
 
