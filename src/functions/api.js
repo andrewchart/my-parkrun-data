@@ -19,9 +19,12 @@ app.http('parkruns', {
         );
 
         let results = [];
-        let parkruns = await tableService.listEntities();
+        let parkruns = await tableService.listEntities({
+            queryOptions: { select: ['event','run_date','run_number','pos','time','age_grade','pb'] }
+        });
 
         for await (const parkrun of parkruns) {
+            delete parkrun.etag;
             results.push(parkrun);
         }
 
