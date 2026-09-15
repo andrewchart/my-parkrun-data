@@ -6,7 +6,7 @@ function Parkrun(event, run_date, run_number, pos, time, age_grade, pb) {
     this.run_date = dateFromUKDateString(run_date); 
     this.run_number = parseInt(run_number); 
     this.pos = parseInt(pos); 
-    this.time = temporalFromMinsSecs(time); 
+    this.time = temporalStringFromMinsSecs(time); 
     this.age_grade = parseFloat(age_grade); 
     this.pb = (pb.trim() === 'PB' ? true : false);
 }
@@ -19,9 +19,9 @@ function dateFromUKDateString(dateString) {
     return new Date(Date.UTC(Y,m,d));
 }
 
-function temporalFromMinsSecs(time) {
+function temporalStringFromMinsSecs(time) {
     let minsSecs = time.split(":");
-    return new Temporal.Duration(0, 0, 0, 0, 0, ...minsSecs);
+    return new Temporal.Duration(0, 0, 0, 0, 0, ...minsSecs).toString();
 }
 
 module.exports = Parkrun;

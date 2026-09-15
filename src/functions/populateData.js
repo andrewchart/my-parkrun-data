@@ -109,10 +109,20 @@ async function writeRuns(runs, creds) {
     // Write only the runs that are not yet in the table
     for(let i = 0; runNum - i > highestId; i++) {
 
+        let run = new Parkrun(
+            runs[i].event,
+            runs[i].run_date,
+            runs[i].run_number,
+            runs[i].pos,
+            runs[i].time,
+            runs[i].age_grade,
+            runs[i].pb
+        );
+
         results.push(tableService.upsertEntity({ 
             partitionKey: 'run', 
             rowKey: (runNum - i).toString().padStart(4, "0"), 
-            ...new Parkrun(...runs[i])
+            ...run
         }, "Replace"));
 
     };
