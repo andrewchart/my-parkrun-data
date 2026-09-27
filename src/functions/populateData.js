@@ -18,7 +18,7 @@ const {
 } = process.env;
 
 app.timer('populateData', {
-    schedule: '0 0 19 * * 6',
+    schedule: '0 0 18 * * 6',
     handler: async (myTimer, context) => {
         try {
             return populateTableFromJson(context);
