@@ -3,7 +3,12 @@ const { TableClient } = require("@azure/data-tables");
 const { DefaultAzureCredential } = require("@azure/identity");
 
 const {
+    Stat
+} = require('../model/Stats.js');
+
+const {
     AZ_API_DATA_TABLE_NAME,
+    AZ_API_STATS_TABLE_NAME,
     AZ_TABLE_STORAGE_URL
 } = process.env;
 
@@ -33,6 +38,53 @@ app.http('parkruns', {
 
         let response = {
             body: JSON.stringify({ message: 'OK', parkruns }),
+            status: 200
+        }
+
+        return response;
+    }
+});
+
+
+app.http('stats', {
+    methods: ['GET'],
+    authLevel: 'anonymous',
+    handler: async (request, context) => {
+
+        const tableService = new TableClient(
+            AZ_TABLE_STORAGE_URL, 
+            AZ_API_STATS_TABLE_NAME, 
+            new DefaultAzureCredential()
+        );
+
+        let filter = null;
+
+        const { keys } = request.params;
+
+        if(keys) {
+            filter = keys.split(',')
+                .map(key => `RowKey eq '${key}'`)
+                .join(' or ');
+        }
+
+        let stats = [];
+        let data = await tableService.listEntities({
+            queryOptions: { 
+                select: ['RowKey','value'],
+                filter
+            }
+        });
+
+        for await (const stat of data) {
+            delete stat.etag;
+            stats.push(new Stat(
+                stat.rowKey,
+                stat.value
+            ));
+        }
+
+        let response = {
+            body: JSON.stringify({ message: 'OK', stats }),
             status: 200
         }
 

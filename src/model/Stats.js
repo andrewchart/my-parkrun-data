@@ -12,8 +12,9 @@ const tableService = new TableClient(
     new DefaultAzureCredential()
 );
 
-function Stats() {
-    return this;
+function Stat(name, value) {
+    this.name = name;
+    this.value = value;
 }
 
 async function getStat(name) {
@@ -38,7 +39,7 @@ async function setStat(name, value) {
 }
 
 module.exports = {
-    Stats,
+    Stat,
     getStat,
     setStat
 }
